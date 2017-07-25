@@ -61,7 +61,7 @@ if __name__ == '__main__':
                 os.system('perl src/utils/eval.pl -g ' + options.conll_dev  + ' -s ' + devpath  + ' > ' + devpath + '.txt')
             else:
                 os.system('python src/utils/evaluation_script/conll17_ud_eval.py -v -w src/utils/evaluation_script/weights.clas ' + options.conll_dev + ' ' + devpath + ' > ' + devpath + '.txt')
-            
+
             print 'Finished predicting dev'
             parser.Save(os.path.join(options.output, options.model + str(epoch+1)))
     else:
@@ -72,17 +72,27 @@ if __name__ == '__main__':
 
         parser = ArcHybridLSTM(words, pos, rels, w2i, stored_opt)
         parser.Load(options.model)
+        print 'End of parameters loading'
         conllu = (os.path.splitext(options.conll_test.lower())[1] == '.conllu')
         tespath = os.path.join(options.output, 'test_pred.conll' if not conllu else 'test_pred.conllu')
         ts = time.time()
-        pred = list(parser.Predict(options.conll_test))
+
+        print 'Starting to parse'
+        pred = []
+        for sentence in parser.Predict(options.conll_test):
+            pred.append(sentence)
+            if len(pred) % 100 == 0 and len(pred) > 0:
+                print '%i parsed sentences' % len(pred)
+
+        #pred = list(parser.Predict(options.conll_test))
         te = time.time()
+        print 'End of parsing, sending into %s' % tespath
         utils.write_conll(tespath, pred)
 
         if not conllu:
             os.system('perl src/utils/eval.pl -g ' + options.conll_test + ' -s ' + tespath  + ' > ' + tespath + '.txt')
         else:
             os.system('python src/utils/evaluation_script/conll17_ud_eval.py -v -w src/utils/evaluation_script/weights.clas ' + options.conll_test + ' ' + tespath + ' > ' + testpath + '.txt')
-        
+
         print 'Finished predicting test',te-ts
 
