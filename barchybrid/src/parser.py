@@ -70,7 +70,9 @@ if __name__ == '__main__':
 
         stored_opt.external_embedding = options.external_embedding
 
+        print 'Initialize ArcHybridLSTM parser'
         parser = ArcHybridLSTM(words, pos, rels, w2i, stored_opt)
+        print 'Start loading parameters'
         parser.Load(options.model)
         print 'End of parameters loading'
         conllu = (os.path.splitext(options.conll_test.lower())[1] == '.conllu')
