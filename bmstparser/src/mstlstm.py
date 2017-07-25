@@ -7,7 +7,7 @@ import numpy as np
 
 class MSTParserLSTM:
     def __init__(self, vocab, pos, rels, w2i, options):
-        self.model = Model()
+        self.model = ParameterCollection()
         random.seed(1)
         self.trainer = AdamTrainer(self.model)
 
@@ -136,7 +136,7 @@ class MSTParserLSTM:
 
 
     def Load(self, filename):
-        self.model.load(filename)
+        self.model.populate(filename)
 
 
     def Predict(self, conll_path):

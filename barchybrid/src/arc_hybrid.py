@@ -8,7 +8,7 @@ import numpy as np
 
 class ArcHybridLSTM:
     def __init__(self, words, pos, rels, w2i, options):
-        self.model = Model()
+        self.model = ParameterCollection()
         self.trainer = AdamTrainer(self.model)
         random.seed(1)
 
@@ -155,7 +155,7 @@ class ArcHybridLSTM:
 
 
     def Load(self, filename):
-        self.model.load(filename)
+        self.model.populate(filename)
 
     def Init(self):
         evec = self.elookup[1] if self.external_embedding is not None else None
