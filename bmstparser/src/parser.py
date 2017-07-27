@@ -1,5 +1,5 @@
 from optparse import OptionParser
-import pickle, utils, mstlstm, os, os.path, time
+import pickle, utils, mstlstm, os, os.path, time, sys
 
 
 if __name__ == '__main__':
@@ -33,6 +33,7 @@ if __name__ == '__main__':
 
     print 'Using external embedding:', options.external_embedding
 
+    root_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
     if options.predictFlag:
         with open(options.params, 'r') as paramsfp:
             words, w2i, pos, rels, stored_opt = pickle.load(paramsfp)
@@ -53,9 +54,9 @@ if __name__ == '__main__':
         utils.write_conll(tespath, test_res)
 
         if not conllu:
-            os.system('perl src/utils/eval.pl -g ' + options.conll_test + ' -s ' + tespath  + ' > ' + tespath + '.txt')
+            os.system('perl %s/utils/eval.pl -g ' % root_dir + options.conll_test + ' -s ' + tespath  + ' > ' + tespath + '.txt')
         else:
-            os.system('python src/utils/evaluation_script/conll17_ud_eval.py -v -w src/utils/evaluation_script/weights.clas ' + options.conll_test + ' ' + tespath + ' > ' + testpath + '.txt')
+            os.system('python %s/utils/evaluation_script/conll17_ud_eval.py -v -w %s/utils/evaluation_script/weights.clas ' % (root_dir, root_dir) + options.conll_test + ' ' + tespath + ' > ' + testpath + '.txt')
     else:
         print 'Preparing vocab'
         words, w2i, pos, rels = utils.vocab(options.conll_train)
@@ -76,7 +77,7 @@ if __name__ == '__main__':
             parser.Save(os.path.join(options.output, os.path.basename(options.model) + str(epoch+1)))
 
             if not conllu:
-                os.system('perl src/utils/eval.pl -g ' + options.conll_dev  + ' -s ' + devpath  + ' > ' + devpath + '.txt')
+                os.system('perl %s/utils/eval.pl -g ' % root_dir + options.conll_dev  + ' -s ' + devpath  + ' > ' + devpath + '.txt')
             else:
-                os.system('python src/utils/evaluation_script/conll17_ud_eval.py -v -w src/utils/evaluation_script/weights.clas ' + options.conll_dev + ' ' + devpath + ' > ' + devpath + '.txt')
+                os.system('python %s/utils/evaluation_script/conll17_ud_eval.py -v -w %s/utils/evaluation_script/weights.clas ' % (root_dir, root_dir) + options.conll_dev + ' ' + devpath + ' > ' + devpath + '.txt')
 

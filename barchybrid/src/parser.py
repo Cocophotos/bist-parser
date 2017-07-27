@@ -35,6 +35,7 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
     print 'Using external embedding:', options.external_embedding
 
+    root_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
     if not options.predictFlag:
         if not (options.rlFlag or options.rlMostFlag or options.headFlag):
             print 'You must use either --userlmost or --userl or --usehead (you can use multiple)'
@@ -58,9 +59,9 @@ if __name__ == '__main__':
             utils.write_conll(devpath, parser.Predict(options.conll_dev))
 
             if not conllu:
-                os.system('perl src/utils/eval.pl -g ' + options.conll_dev  + ' -s ' + devpath  + ' > ' + devpath + '.txt')
+                os.system('perl %s/utils/eval.pl -g ' % root_dir + options.conll_dev  + ' -s ' + devpath  + ' > ' + devpath + '.txt')
             else:
-                os.system('python src/utils/evaluation_script/conll17_ud_eval.py -v -w src/utils/evaluation_script/weights.clas ' + options.conll_dev + ' ' + devpath + ' > ' + devpath + '.txt')
+                os.system('python %s/utils/evaluation_script/conll17_ud_eval.py -v -w %s/utils/evaluation_script/weights.clas ' % (root_dir, root_dir) + options.conll_dev + ' ' + devpath + ' > ' + devpath + '.txt')
 
             print 'Finished predicting dev'
             parser.Save(os.path.join(options.output, options.model + str(epoch+1)))
@@ -92,9 +93,9 @@ if __name__ == '__main__':
         utils.write_conll(tespath, pred)
 
         if not conllu:
-            os.system('perl src/utils/eval.pl -g ' + options.conll_test + ' -s ' + tespath  + ' > ' + tespath + '.txt')
+            os.system('perl %s/utils/eval.pl -g ' % root_dir + options.conll_test + ' -s ' + tespath  + ' > ' + tespath + '.txt')
         else:
-            os.system('python src/utils/evaluation_script/conll17_ud_eval.py -v -w src/utils/evaluation_script/weights.clas ' + options.conll_test + ' ' + tespath + ' > ' + testpath + '.txt')
+            os.system('python %s/utils/evaluation_script/conll17_ud_eval.py -v -w %s/utils/evaluation_script/weights.clas ' % (root_dir, root_dir) + options.conll_test + ' ' + tespath + ' > ' + testpath + '.txt')
 
         print 'Finished predicting test',te-ts
 
